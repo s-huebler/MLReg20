@@ -10,3 +10,4 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/s-huebler/MLReg20
 BugReports: https://github.com/s-huebler/MLReg20/issues
+RoxygenNote: 7.1.1
