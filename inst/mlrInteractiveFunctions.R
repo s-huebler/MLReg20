@@ -1,3 +1,53 @@
+assumptionStat<-function(lm, assumption){
+
+  #Durbin-Wilson for independence
+  dw<-lmtest::dwtest(lm)
+  dwStat<-unname(dw$statistic)
+  dwP<-unname(dw$p.value)
+  auto<-c("Durbin-Wilson Statistic"=dwStat, "p-value"=dwP)
+
+  #Breusch-Pagan for homo
+  bp <- lmtest::bptest(lm)
+  bpStat <- unname(bp$statistic)
+  bpP <- unname(bp$p.value)
+  ind <- c("Breusch-Pagan Statistic"=bpStat, "p-value"=bpP)
+
+  #Shapiro-Wilks for norm
+  sw <- stats::shapiro.test(lm$residuals)
+  swStat <- unname(sw$statistic)
+  swP <- unname(sw$p.value)
+  norm <- c("Shapiro-Wilks Statistic"=swStat, "p-value"=swP)
+
+  #Mulit
+  vif <- regclass::VIF(lm)
+  vif <- as.data.frame(vif, nrow=2)
+
+  #Cooks
+  cook <- c("No Statistic"=NA, "No p-value"=NA)
+
+  if(assumption=="Independence"){
+
+    return(auto)
+  }
+  if(assumption=="Homoscedasticity"){
+
+    return(ind)
+  }
+  if(assumption=="Normality"){
+
+    return(norm)
+  }
+  if(assumption=="Multicollinearity"){
+    return(vif)
+  }
+  if(assumption=="Outliers"){
+
+    return(cook)
+  }
+}
+
+
+
 assumptionVisual<-function(lm, assumption){
 
   #Residuals plot
@@ -32,6 +82,7 @@ assumptionVisual<-function(lm, assumption){
     ggplot2::theme_classic()+
     ggplot2::theme(legend.position = "none",
                    text=ggplot2::element_text(family = "Times"))
+  normGrids<-gridExtra::grid.arrange(densPlot, qqPlot, ncol=2)
 
   #Cooks plot
   cookPlot<-lindia::gg_cooksd(lm, threshold = "convention")+
@@ -40,60 +91,37 @@ assumptionVisual<-function(lm, assumption){
     ggplot2::theme(legend.position = "none",
                    text=ggplot2::element_text(family = "Times"))
 
+  #Empty plot for independenc
+  indPlot<-ggplot2::ggplot(data = iris, ggplot2::aes(x = Sepal.Width)) +
+    ggplot2::theme_void() +
+    ggplot2::theme(legend.position="none", text=ggplot2::element_text(family = "Times"))+
+    ggplot2::labs(x="", y="")+
+    ggplot2::annotate(geom="text", x=40, y=40 , label="IF DATA IS TIME SERIES, SEE DURBIN-WILSON, OTHERWISE CONSIDER SATISFIED")
+
+
+
+  # Empty plot for multi
+  multPlot<-ggplot2::ggplot(data = iris, ggplot2::aes(x = Sepal.Width)) +
+    ggplot2::theme_void() +
+    ggplot2::theme(legend.position="none", text=ggplot2::element_text(family = "Times"))+
+    ggplot2::labs(x="", y="")+
+    ggplot2::annotate(geom="text", x=40, y=40 , label="SEE VIF SCORES")
+
 
   if(assumption=="Independence"){
-  print("If data is time series, see Durbin-Wilson Statistic, otherwise condiser satisfied")
+    print(indPlot)
   }
   if(assumption=="Homoscedasticity"){
   print(resPlot)
   }
   if(assumption=="Normality"){
-  print(densPlot + qqPlot)
+  print(normGrids)
   }
   if(assumption=="Multicollinearity"){
-  print("See VIF scores")
+  print(multPlot)
   }
   if(assumption=="Outliers"){
   print(cookPlot)
   }
 }
 
-assumptionStat<-function(lm, assumption){
-
-  #Durbin-Wilson for independence
-  dw<-lmtest::dwtest(lm)
-  dwStat<-unname(dw$statistic)
-  dwP<-unname(dw$p.value)
-  auto<-c("Durbin Wilson Statistic"=dwStat, "Durbin Wilson p-value"=dwP)
-
-  #Breusch-Pagan for homo
-  bp<-lmtest::bptest(lm)
-  bpStat<-unname(bp$statistic)
-  bpP<-unname(bp$p.value)
-  ind<-c("Breusch-Pagan Statistic"=bpStat, "Breush-Pagan p-value"=bpP)
-
-  #Shapiro-Wilks for norm
-  sw<-stats::shapiro.test(lm$residuals)
-  swStat<-unname(sw$statistic)
-  swP<-unname(sw$p.value)
-  norm<-c("Shapiro Wilks Statistic"=swStat, "Shapiro Wilks Statistic"=swP)
-
-  #Mulit
-  vif<-regclass::VIF(lm)
-
-  if(assumption==Independence){
-    print(auto)
-  }
-  if(assumption==Homoscedasticity){
-    print(ind)
-  }
-  if(assumption==Normality){
-    print(norm)
-  }
-  if(assumption==Multicollinearity){
-    print(vif)
-  }
-  if(assumption==Outliers){
-    print("See Cook's Distance Plot")
-  }
-}

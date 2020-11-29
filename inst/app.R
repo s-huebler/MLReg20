@@ -3,6 +3,7 @@ library(datasets)
 library(ggplot2)
 library(lindia)
 library(regclass)
+library(stats)
 source("mlrInteractiveFunctions.R")
 
 #Iris dataset
@@ -27,17 +28,33 @@ ui<- fluidPage(
 
     sidebarPanel(
 
+
+      #Assumptions to check
+      selectInput("assumptions",
+                  "Select assumption to check",
+                  choices = c("Homoscedasticity", "Normality", "Outliers", "Multicollinearity", "Independence")
+      ),
+
+    ),
+
+
+  mainPanel(
+    plotOutput("assumptionPlot"),
+    tableOutput("assumptionValue")
+    #tableOutput("bootStats"),
+    #plotOutput("comparison")
+  )
+  ),
+
+  sidebarLayout(
+
+    sidebarPanel(
+
       #Alpha level
       selectInput("alpha",
                   "Select alpha level",
                   choices = c(0.01, 0.05, 0.1)),
 
-
-      #Assumptions to check
-      selectInput("assumptions",
-                  "Select assumption to check",
-                  choices = c("Independence", "Homoscedasticity", "Normality", "Multicollinearity", "Outliers")
-      ),
 
       #Bootstrap Iterations
       sliderInput("bootIter",
@@ -45,17 +62,15 @@ ui<- fluidPage(
                   min= 1,
                   max= 10000,
                   value= 1000,
-                  step= 100),
+                  step= 100)
 
     ),
 
 
-  mainPanel(
-    plotOutput("assumptionPlot"),
-    #tableOutput("assumptionValue"),
-    #tableOutput("bootStats"),
-    #plotOutput("comparison")
-  )
+    mainPanel(
+      #tableOutput("bootStats"),
+      #plotOutput("comparison")
+    )
   )
 )
 
@@ -67,9 +82,11 @@ server<- function(input, output, session){
   })
 
   #Which assumption to print statistic for
-  # output$assumptionValue <- renderPlot({
-  #   assumptionStat(irislm, input$assumptions)
-  # })
+  output$assumptionValue <- renderTable({
+    df<-assumptionStat(irislm, input$assumptions)
+    df
+    }, rownames = TRUE, colnames = FALSE
+  )
 
   #output$bootStats <- a
 
