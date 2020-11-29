@@ -43,19 +43,19 @@ ui<- fluidPage(
       sliderInput("bootIter",
                   "Choose bootstrap number",
                   min= 1,
-                  max= 100000,
+                  max= 10000,
                   value= 1000,
                   step= 100),
 
     ),
 
-  ),
 
   mainPanel(
     plotOutput("assumptionPlot"),
-    tableOutput("assumptionValue"),
+    #tableOutput("assumptionValue"),
     #tableOutput("bootStats"),
     #plotOutput("comparison")
+  )
   )
 )
 
@@ -67,9 +67,9 @@ server<- function(input, output, session){
   })
 
   #Which assumption to print statistic for
-  output$assumptionValue <- renderPlot({
-    assumptionStat(irislm, input$assumptions)
-  })
+  # output$assumptionValue <- renderPlot({
+  #   assumptionStat(irislm, input$assumptions)
+  # })
 
   #output$bootStats <- a
 

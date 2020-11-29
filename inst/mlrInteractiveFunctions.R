@@ -34,27 +34,26 @@ assumptionVisual<-function(lm, assumption){
                    text=ggplot2::element_text(family = "Times"))
 
   #Cooks plot
-  cookPlot<-lindia::gg_cooksd(lm, threshold = "baseR")+
+  cookPlot<-lindia::gg_cooksd(lm, threshold = "convention")+
     ggplot2::labs(title="Cook's Distance Plot")+
     ggplot2::theme_classic()+
     ggplot2::theme(legend.position = "none",
                    text=ggplot2::element_text(family = "Times"))
 
 
-  if(assumption==Independence){
+  if(assumption=="Independence"){
   print("If data is time series, see Durbin-Wilson Statistic, otherwise condiser satisfied")
   }
-  if(assumption==Homoscedasticity){
+  if(assumption=="Homoscedasticity"){
   print(resPlot)
   }
-  if(assumption==Normality){
-  print(densPlot)
-  print(qqPlot)
+  if(assumption=="Normality"){
+  print(densPlot + qqPlot)
   }
-  if(assumption==Multicollinearity){
+  if(assumption=="Multicollinearity"){
   print("See VIF scores")
   }
-  if(assumption==Outliers){
+  if(assumption=="Outliers"){
   print(cookPlot)
   }
 }
