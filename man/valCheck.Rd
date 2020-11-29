@@ -4,14 +4,30 @@
 \alias{valCheck}
 \title{Check the validity of a linear model}
 \usage{
-valCheck(lm)
+valCheck(lm, series = FALSE)
 }
 \arguments{
 \item{lm}{a linear model}
+
+\item{series}{a boolean variable to indicate whether linear model has a time component}
 }
 \value{
-command line statistics
+command line statistics and plots
 }
 \description{
 Check the validity of a linear model
+}
+\examples{
+require(datasets)
+
+iris<-as.data.frame(datasets::iris)
+iris<-within(iris, {
+Setosa<-ifelse(Species=="setosa", 1, 0)
+Versicolor<-ifelse(Species=="versicolor", 1, 0)
+rm(Species)
+})
+
+irislm<-lm(Sepal.Length~., data=iris)
+valCheck(irislm)
+
 }
