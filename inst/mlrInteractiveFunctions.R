@@ -262,3 +262,31 @@ oCI<-function(data, alpha=0.05){
   rownames(cio)<-c("Estimate", "Lower", "Upper")
   cio
 }
+
+ciPlots<-function(data, iter, alpha=0.05){
+  cib<-as.data.frame(t(ciComps(data, iter, alpha)))
+  cib<-cbind(rownames(cib), cib)
+  rownames(cib)<-NULL
+  names(cib)[1]<-"Beta"
+  cib$TYPE<-rep(as.factor("b"), nrow(cib))
+
+
+  cio<-as.data.frame(t(oCI(data, alpha)))
+  cio<-cbind(rownames(cio), cio)
+  rownames(cio)<-NULL
+  names(cio)[1]<-"Beta"
+  cio$TYPE<-rep(as.factor("o"), nrow(cio))
+
+
+  df<-dplyr::full_join(cib, cio)
+  df<-as.data.frame(df)
+
+  names(df)[1]<-"Betas"
+
+
+  plot<-ggplot2::ggplot(df, aes(x=Betas, y=Estimate, color=TYPE ))+
+    ggplot2::geom_point()
+
+  print(plot)
+
+}

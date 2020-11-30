@@ -62,13 +62,13 @@ ui<- fluidPage(
 
     tabPanel("Comparison of Confidence Intervals",
                 tableOutput("oCI"),
-                tableOutput("bootCI")
-                #plotOutput("comparison"))
+                tableOutput("bootCI"),
+                plotOutput("comparison"))
 
-  )
+
     )
-)
-)
+  )
+ )
 )
 
 
@@ -86,8 +86,8 @@ server<- function(input, output, session){
     }, rownames = TRUE, colnames = FALSE
   )
 
-   output$oCI <- renderTable({
-   #tab<-c("a"=1, "b"=2)
+  #Different tables of estimates
+     output$oCI <- renderTable({
      ret<-oCI(iris, alpha=as.numeric(input$alpha))
      df2<-as.data.frame(ret)
      df2
@@ -104,6 +104,9 @@ server<- function(input, output, session){
    caption="Bootstrapped CI",
    caption.placement = getOption("xtable.caption.placement", "top"))
 
+   output$comparison <- renderPlot({
+     ciPlots(iris, as.numeric(input$bootIter), as.numeric(input$alpha))
+   })
 
 }
 

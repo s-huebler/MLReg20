@@ -63,7 +63,7 @@ valCheck<-function(lm, series=FALSE){
     ggplot2::ylab("")+
     ggplot2::xlab("")+
     ggplot2::labs(title="Density Plot of Residuals of the Model",
-                  caption=paste("Mean", mean(lm$residuals), "Standard deviation:", sd(lm$residuals)))+
+                  caption=paste("Mean", mean(lm$residuals), "Standard deviation:", stats::sd(lm$residuals)))+
     ggplot2::theme_classic()+
     ggplot2::theme(legend.position = "none",
                    text=ggplot2::element_text(family = "Times"))
