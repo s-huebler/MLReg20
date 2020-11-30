@@ -78,7 +78,7 @@ mlrBoot<-function(data, iter, alpha=.05){
   #Summary statistics
   summ<-sapply(betas, function(x){
     ave<-mean(x)
-    s<-sd(x)
+    s<-stats::sd(x)
     min<-min(x)
     max<-max(x)
     n<-length(x)

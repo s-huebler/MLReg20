@@ -18,7 +18,6 @@ command line statistics and plots
 Check the validity of a linear model
 }
 \examples{
-require(datasets)
 
 iris<-as.data.frame(datasets::iris)
 iris<-within(iris, {

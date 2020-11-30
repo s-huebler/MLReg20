@@ -35,21 +35,6 @@ ui<- fluidPage(
                   choices = c("Homoscedasticity", "Normality", "Outliers", "Multicollinearity", "Independence")
       ),
 
-    ),
-
-
-  mainPanel(
-    plotOutput("assumptionPlot"),
-    tableOutput("assumptionValue")
-    #tableOutput("bootStats"),
-    #plotOutput("comparison")
-  )
-  ),
-
-  sidebarLayout(
-
-    sidebarPanel(
-
       #Alpha level
       selectInput("alpha",
                   "Select alpha level",
@@ -61,18 +46,31 @@ ui<- fluidPage(
                   "Choose bootstrap number",
                   min= 1,
                   max= 10000,
-                  value= 1000,
+                  value= 100,
                   step= 100)
+
 
     ),
 
 
-    mainPanel(
-      #tableOutput("bootStats"),
-      #plotOutput("comparison")
-    )
+  mainPanel(
+    tabsetPanel(
+      tabPanel("Assumptions",
+               plotOutput("assumptionPlot"),
+               tableOutput("assumptionValue")),
+
+
+    tabPanel("Comparison of Confidence Intervals",
+                tableOutput("oCI"),
+                tableOutput("bootCI")
+                #plotOutput("comparison"))
+
   )
+    )
 )
+)
+)
+
 
 server<- function(input, output, session){
 
@@ -88,9 +86,25 @@ server<- function(input, output, session){
     }, rownames = TRUE, colnames = FALSE
   )
 
-  #output$bootStats <- a
+   output$oCI <- renderTable({
+   #tab<-c("a"=1, "b"=2)
+     ret<-oCI(iris, alpha=as.numeric(input$alpha))
+     df2<-as.data.frame(ret)
+     df2
+   }, rownames = TRUE,
+   caption="Original CI",
+   caption.placement = getOption("xtable.caption.placement", "top"))
 
-  #output$comparison <- a
+   output$bootCI <- renderTable({
+     #tab<-c("a"=1, "b"=2)
+     ret<-ciComps(iris, iter=as.numeric(input$bootIter), alpha=as.numeric(input$alpha))
+     df1<-as.data.frame((ret))
+     df1
+   }, rownames = TRUE,
+   caption="Bootstrapped CI",
+   caption.placement = getOption("xtable.caption.placement", "top"))
+
+
 }
 
 #Run app

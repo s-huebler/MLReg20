@@ -11,7 +11,6 @@
 #'
 #'
 #' @examples
-#' require(datasets)
 #'
 #' iris<-as.data.frame(datasets::iris)
 #' iris<-within(iris, {
@@ -103,7 +102,6 @@ valCheck<-function(lm, series=FALSE){
 
   # #Cooks
 
-  library(lindia)
   cookPlot<-lindia::gg_cooksd(lm, threshold = "baseR")+
     ggplot2::labs(title="Cook's Distance Plot")+
     ggplot2::theme_classic()+
