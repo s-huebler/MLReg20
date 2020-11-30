@@ -1,11 +1,6 @@
 #' Shiny app for interactive mlr
 #'
 #' @return
-#' @import 'ggplot2'
-#' @import 'lindia'
-#' @import 'lmtest'
-#' @import 'regclass'
-#' @import 'shiny'
 #'
 #' @export
 #'

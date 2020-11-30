@@ -3,10 +3,6 @@
 #' @param lm a linear model
 #' @param series a boolean variable to indicate whether linear model has a time component
 #'
-#' @import 'ggplot2'
-#' @import 'lindia'
-#' @import 'lmtest'
-#' @import 'regclass'
 #'
 #' @return command line statistics and plots
 #'
