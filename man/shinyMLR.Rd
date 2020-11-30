@@ -12,3 +12,6 @@ shinyMLR()
 \description{
 Shiny app for interactive mlr
 }
+\examples{
+\dontrun{ shinyMLR()}
+}

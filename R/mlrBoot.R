@@ -5,6 +5,9 @@
 #' @param alpha , confidence level
 #'
 #' @return , command line statistics and plots
+#' @import 'datasets'
+#' @import 'stats'
+#'
 #' @export
 #'
 #' @examples

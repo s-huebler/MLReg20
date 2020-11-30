@@ -1,7 +1,6 @@
 ---
 title: "MLReg20_Explanation_And_Theory"
 output: rmarkdown::html_vignette
-bibliography: proj3.bib
 vignette: >
   %\VignetteIndexEntry{MLReg20_Explanation_And_Theory}
   %\VignetteEngine{knitr::rmarkdown}
