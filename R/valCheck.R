@@ -1,10 +1,19 @@
-#' Check the validity of a linear model
+#' @title Check Validity of Linear Model
 #'
-#' @param lm a linear model
-#' @param series a boolean variable to indicate whether linear model has a time component
+#' This function will help determine the validity of a linear model.
+#' The function produces statistics and or plots to assess
+#' equality of variance, normality, multicollinearity, and outliers.
+#' If \code{series=TRUE} then the function will also print a statistic
+#' for independence. See vignette MLReg20_Explanation_And_Theory Section 1
+#' for explanation of interpretation of statistics and plots.
+#'
+#' @usage \code{valCheck(lm, series=FALSE)}
+#'
+#' @param lm A linear model object.
+#' @param series A boolean variable to indicate whether linear model has a time series component.
 #'
 #'
-#' @return command line statistics and plots
+#' @return Statistics will be printed to the command line statistics. Plots will be printed.
 #'
 #' @export
 #'
@@ -21,6 +30,8 @@
 #'
 #' irislm<-lm(Sepal.Length~., data=iris)
 #' valCheck(irislm)
+#'
+#' irislm2<-lm(Sepal.Lenght~.^2, data=iris)
 #'
 valCheck<-function(lm, series=FALSE){
   #Autocorrelation (only works for series=TRUE and single order)
