@@ -7,5 +7,5 @@
 #' @examples
 #' \dontrun{ shinyMLR()}
 shinyMLR<-function(){
-  shiny::runApp(system.file("inst", package="MLReg20"),launch.browser = TRUE)
+  shiny::runApp(system.file("Interactive", package="MLReg20"),launch.browser = TRUE)
 }
