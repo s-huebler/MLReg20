@@ -1,10 +1,27 @@
-#' Bootstrap analysis of a multiple linear regression model
+#' @title Bootstrap Analysis of Linear Model
 #'
-#' @param data , a data frame with first column the dependent variable and all other columns predictors
-#' @param iter , number of bootstrap iterations
-#' @param alpha , confidence level
+#' This function will perform a bootstrap analysis of a linear model. The function produces creates
+#' \code{iter} number of data frames and attempts a linear regression. If the linear regression
+#' fails then it is recorded as a singular matrix. The number of failed attempts is recorded. If
+#' it does not fail then an estimate of each parameter is produced. At the end all of the different
+#' estimates are summarized. The mean is taken to be the bootstrapped estimate and the 1-alpha
+#' quantile of all the estimates is the upper bound and the alpha quantile of all of the estimates
+#' is the lower bound of a (1-alpha)\% confidence interval for the bootstrapped parameter estimates.
 #'
-#' @return , command line statistics and plots
+#' @usage \code{mlrBoot(data, iter, alpha=0.05)}
+#'
+#' @param data A data frame with first column as the dependent variable and all other columns predictors.
+#' @param iter Number of bootstrap iterations
+#' @param alpha Confidence level
+#'
+#' @return The function will print an array of summary statistics for each parameter estimate. The
+#'   summary includes the total number of successful bootstrapped estimates, the mean, the standard
+#'   deviation, the max, and the min. The function will also print the number of unsuccessful bootstrap
+#'   attempts under "Number of Singular Matrices." The function will print an array of bootstrapped
+#'   parameter estimates that include both the estimates and (1-alpha)\% confidence intervals. The
+#'   bootstrapped estimate is the mean of all of the bootstrap estimates calculated. The function
+#'   will also print an array of regular multiple linear regression parameter estimates and (1-alpha)\%
+#'   confidence intervals for easy comparison.
 #'
 #' @export
 #'
@@ -137,7 +154,7 @@ mlrBoot<-function(data, iter, alpha=.05){
 
 
   #The list to be returned
-  ret<-list("Bootstrap Summary Statistics"=summ,
+  tmp<-list("Bootstrap Summary Statistics"=summ,
             "Singular Matrices"=fails,
             "Bootstrap Confidence Intervals"=cis,
             "Original MLR Confidence Intervals"=cio
@@ -145,7 +162,7 @@ mlrBoot<-function(data, iter, alpha=.05){
 
   #Printing the return to the console here because otherwise it shows up in the
   #middle of histograms
-  print(ret)
+  #print(ret)
 
   #Histograms
   mapply(betas, 0:(ncol(betas)-1),
@@ -154,6 +171,6 @@ mlrBoot<-function(data, iter, alpha=.05){
                                                  xlab=paste("Beta", index, "Values"))},USE.NAMES = TRUE)
 
   #Return what was printed before as an invisible list
-  invisible(ret)
+  invisible(tmp)
 
 }

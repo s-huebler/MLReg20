@@ -4,6 +4,7 @@ library(ggplot2)
 library(lindia)
 library(regclass)
 library(stats)
+library(readxl)
 source("mlrInteractiveFunctions.R")
 
 #Iris dataset
@@ -16,6 +17,17 @@ rm(Species)
 })
 irislm<-lm(Sepal.Length~., data=iris)
 
+quasar<-readxl::read_excel("inst/Interactive/QUASAR.XLS")
+quasar<-quasar[,c(7,2:6)]
+
+#All Q linear model
+qlm1<-lm(RFEWIDTH~., data=quasar)
+#Best model
+qlmBest<-lm(log(RFEWIDTH)~REDSHIFT + LINEFLUX + ABSMAG ,data=quasar)
+quasar2<-within(quasar, {logRFEWIDTH<-log(RFEWIDTH)})
+quasar2<-quasar2[c(7,2,3,6),]
+
+
 #User Interface
 ui<- fluidPage(
 
@@ -27,6 +39,11 @@ ui<- fluidPage(
   sidebarLayout(
 
     sidebarPanel(
+
+      #Pick data
+      selectInput("data",
+                  "Select which dataset to use",
+                  choices=c("Iris", "Quasar")),
 
 
       #Assumptions to check
@@ -55,6 +72,10 @@ ui<- fluidPage(
 
   mainPanel(
     tabsetPanel(
+      tabPanel("Model Selection",
+               dataTableOutput("data")
+               ),
+
       tabPanel("Assumptions",
                plotOutput("assumptionPlot"),
                tableOutput("assumptionValue")),
@@ -74,21 +95,39 @@ ui<- fluidPage(
 
 server<- function(input, output, session){
 
+  # Data from input
+  data<- if(input$data=="Iris"){
+    iris
+  }else if(input$data=="Quasar"){
+      quasar2
+  }
+
+  lm<-if(input$data=="Iris"){
+    irislm
+  }else if(input$data=="Quasar"){
+    qlmBest
+  }
+
+  output$data<-renderDataTable({
+    df<-data
+    df
+  })
+
   # Which assumption to print graph for
   output$assumptionPlot <- renderPlot({
-    assumptionVisual(irislm, input$assumptions)
+    assumptionVisual(lm, input$assumptions)
   })
 
   #Which assumption to print statistic for
   output$assumptionValue <- renderTable({
-    df<-assumptionStat(irislm, input$assumptions)
+    df<-assumptionStat(lm, input$assumptions)
     df
     }, rownames = TRUE, colnames = FALSE
   )
 
   #Different tables of estimates
      output$oCI <- renderTable({
-     ret<-oCI(iris, alpha=as.numeric(input$alpha))
+     ret<-oCI(data, alpha=as.numeric(input$alpha))
      df2<-as.data.frame(ret)
      df2
    }, rownames = TRUE,
@@ -97,7 +136,7 @@ server<- function(input, output, session){
 
    output$bootCI <- renderTable({
      #tab<-c("a"=1, "b"=2)
-     ret<-ciComps(iris, iter=as.numeric(input$bootIter), alpha=as.numeric(input$alpha))
+     ret<-ciComps(data, iter=as.numeric(input$bootIter), alpha=as.numeric(input$alpha))
      df1<-as.data.frame((ret))
      df1
    }, rownames = TRUE,
@@ -105,7 +144,7 @@ server<- function(input, output, session){
    caption.placement = getOption("xtable.caption.placement", "top"))
 
    output$comparison <- renderPlot({
-     ciPlots(iris, as.numeric(input$bootIter), as.numeric(input$alpha))
+     ciPlots(data, as.numeric(input$bootIter), as.numeric(input$alpha))
    })
 
 }

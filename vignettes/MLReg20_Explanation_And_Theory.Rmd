@@ -19,7 +19,22 @@ library(MLReg20)
 ```
 
 
-MLReg20 is a package to help assess the validity and usefulness of a multiple linear regression model. A multiple linear regression model has the form $y=\beta_0 + \beta_1x_1+\beta_2x_2+...+\beta_kx_k+\epsilon$ where the terms of the form $\beta_ix_i$ are in the deterministic portion of the model and $\epsilon$ is the error term of the model. The model can be written in matrix form as $Y=X\beta+\epsilon$ where $Y$ is the $n \times 1$ vector of all the responses, $X$ is the $n \times k+1$ design matrix with the first column filled with 1's and all other columns filled with the predictor variables, and $\beta$ is the $k+1 \times 1$ vector of regression coefficients. We can use the observed values to create $\hat{\beta}$, the estimates for the $\beta$'s. Then we can use $Y=\hat{\beta}X$ as a predictive model given different values of the predictor variables. Linear models make assumptions about the $\epsilon$. One large assumption is that the error term is normally distributed around 0. That is $\epsilon \sim N(0, \sigma^2I)$ where $I$ is the identity matrix. When the error is normal, then the expected value $E(y)=E(X\hat{\beta}+\epsilon)=XE(\hat{\beta})+E(\epsilon)=X\beta+0=X\beta$. Therefore, the normality of $\epsilon$ allows us to use the model for predictions. The model's utility as a predictive model depends on the assumptions being met, and it also depends on the confidence of the $\beta$ estimates. The functions valCheck and mlrBoot perform analyses of the assumptions and the confidence of the estimates respectively. The function bayesMLR creates a model based on the bayesian paradigm and compares it to the model from the classical paradigm. Finally, mlrInteractive produces a shiney server to interact with plots. 
+MLReg20 is a package to help assess the validity and usefulness of a multiple linear regression model. A multiple linear regression model has the form $y=\beta_0 + \beta_1x_1+\beta_2x_2+...+\beta_kx_k+\epsilon$ where the terms of the form $\beta_ix_i$ are in the deterministic portion of the model and $\epsilon$ is the error term of the model. The model can be written in matrix form as $Y=X\beta+\epsilon$ where $Y$ is the $n \times 1$ vector of all the responses, $X$ is the $n \times k+1$ design matrix with the first column filled with 1's and all other columns filled with the predictor variables, and $\beta$ is the $k+1 \times 1$ vector of regression coefficients. We can use the observed values to create $\hat{\beta}$, the estimates for the $\beta$'s. Then we can use $Y=\hat{\beta}X$ as a predictive model given different values of the predictor variables. Linear models make assumptions about the $\epsilon$. One large assumption is that the error term is normally distributed around 0. That is $\epsilon \sim N(0, \sigma^2I)$ where $I$ is the identity matrix. When the error is normal, then the expected value $E(y)=E(X\hat{\beta}+\epsilon)=XE(\hat{\beta})+E(\epsilon)=X\beta+0=X\beta$. Therefore, the normality of $\epsilon$ allows us to use the model for predictions. The model's utility as a predictive model depends on the assumptions being met, and it also depends on the confidence of the $\beta$ estimates. The functions valCheck and mlrBoot perform analyses of the assumptions and the confidence of the estimates respectively. The function bayesMLR creates a model based on the bayesian paradigm and compares it to the model from the classical paradigm. Finally, mlrInteractive produces a shiney server to interact with plots. We can use the iris dataset from base R to look at the different functions. 
+
+First we can create a linear model. Importantly, the dependent Y value is the first column. Columns with factors are dummy coded. 
+
+```{r}
+iris<-as.data.frame(datasets::iris)
+ iris<-within(iris, {
+ Setosa<-ifelse(Species=="setosa", 1, 0)
+ Versicolor<-ifelse(Species=="versicolor", 1, 0)
+ rm(Species)
+ })
+
+irislm<-lm(Sepal.Length~., data=iris)
+
+```
+
 
 The first function, valCheck, examines the validity of a linear model. It checks the main assumptions of a linear model. The central assumption of a linear regression model is that the residuals are independent identically distributed normal (iid normal). That can be broken down into three clear assumptions: residuals are independent, residuals are homoscedastic, and residuals follow a normal distribution. Another important assumption of the multiple linear regression is that there is no multicollinearity between the independent variables. The function will produce descriptive statistics and plots that check each of the four assumptions. Additionally, since multiple linear regression models are sometimes sensitive to outliers, valCheck will produce a plot to indicate outliers. 
 
@@ -33,5 +48,22 @@ Multicollinearity refers to the linear relationships between independent (predic
 
 Finally, outliers can throw off a multiple linear regression model. Cook's distance is a measure of how influential a particular sample is. If removing the sample has an effect on the model, the Cook's distance will be high [@cook]. A sample with a Cook's distance greater than 1 should almost always be removed, and a sample with a Cook's distance greater than 0.5 should be looked at very carefully and removal may be suggested. The function valCheck will produce a plot that shows the Cook's distance for each sample and has the samples with Cook's distances greater than 0.5 indicated. 
 
+The analyst must decide the confidence level a priori. The p-values that are produced by the function can then be compared to the confidence level. It is standard to pick a single confidence level for all of the tests, usually 0.05, but a separate confidence level can be established for each test. 
+
+```{r}
+MLReg20::valCheck(irislm)
+```
+Here we see that the model does not have a time series component, so the Durbin-Wilson statistic is not printed. The model is assumped to fulfill independence. The Breush-Pagan p-value is non-significant, so homoscedasticity is fulfilled. The residual vs. fitted model plot visually supports the assessment as well. The Shapiro-Wilks p-value is non-significant, so normality is fulfilled. The density plot is unimodal and bell shaped and the QQ-plot doesn't show significant deviation from linearity, so normality is visually supported as well. The VIF scores for petal length and petal width are high. That indicates that they are likely very multicollinear. It would be a good idea to remove one from the mode. Setosa has a high VIF as well, but it is a factor variable so high VIF is not problematic. A cook's plot shows that there are no samples with a cooks distance greater than 0.07, so outliers are not a problem. 
+
+
 The second function, mlrBoot, runs a bootstrap analysis to estimate the beta values and produce confidence intervals for the values. A bootstrap analysis takes a sampling (with replacement) of all of the rows of the design matrix to create a new design matrix. Then the least squares estimates for all of the betas are preformed. The process is iterated a set number of times, designated by the iter parameter of the function. Estimates and confidence intervals for the bootstrapped betas are shown next to estimates and confidence intervals for the betas from the non-bootstrapped data set. Additionally, the function will return the number of times the bootstrap analysis failed because a singular matrix was produced by the bootstrapping process. Histograms for each beta are created that show the distribution of all of the estimates created by the bootstrap process. Since the betas should follow a normal distribution, the estimate printed to the command line is the mean and the confidence intervals are the $1-\alpha/2$ to $\alpha/2$ quantiles calculated from the distribution. The $\alpha$ is set at 0.05 default, but it can be changed. 
 
+
+Here the data is the input rather than the linear model itself. For each data frame that is created by the bootstrap process, the function creates a linear model by separating the original data frame by columns. The first column is extracted as the Y (dependent variable observations) and the rest of the columns are bound to a column of 1's to create the design matrix. This example has no iteraction. For models that do include interaction the interaction terms will need to be dummy coded as columns to add to the design matrix. 
+
+```{r}
+x<-MLReg20::mlrBoot(iris, 100)
+```
+Here we can see that of the 1000 bootstrap iterations, there are `r x$`Singular Matrices`$`` singular matricies. That means that the process created `r x$`Singular Matrices`$`` singular design matrices. The function also produced bootstrapped and original estimates and confidence intervals. The 2 different matrices can be compared. The estimates are very close, but the bootstrapping process gives a slightly larger confidence interval. The histograms show the distribution of the bootstrapped estimates. All of the distributions follow a normal type distribution, so the mean value is an acceptable estimate.
+
+The third function relies on the Bayesian paradigm over the classical paradigm. The classical paradigm 
