@@ -92,7 +92,7 @@ assumptionVisual<-function(lm, assumption){
                    text=ggplot2::element_text(family = "Times"))
 
   #Empty plot for independenc
-  indPlot<-ggplot2::ggplot(data = iris, ggplot2::aes(x = Sepal.Width)) +
+  indPlot<-ggplot2::ggplot(data = data.frame()) +
     ggplot2::theme_void() +
     ggplot2::theme(legend.position="none", text=ggplot2::element_text(family = "Times"))+
     ggplot2::labs(x="", y="")+
@@ -101,7 +101,7 @@ assumptionVisual<-function(lm, assumption){
 
 
   # Empty plot for multi
-  multPlot<-ggplot2::ggplot(data = iris, ggplot2::aes(x = Sepal.Width)) +
+  multPlot<-ggplot2::ggplot(data = data.frame()) +
     ggplot2::theme_void() +
     ggplot2::theme(legend.position="none", text=ggplot2::element_text(family = "Times"))+
     ggplot2::labs(x="", y="")+
