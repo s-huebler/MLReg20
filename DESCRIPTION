@@ -20,4 +20,5 @@ Imports:
   lindia,
   lmtest,
   regclass,
-  shiny
+  shiny,
+  cowplot

@@ -82,7 +82,8 @@ assumptionVisual<-function(lm, assumption){
     ggplot2::theme_classic()+
     ggplot2::theme(legend.position = "none",
                    text=ggplot2::element_text(family = "Times"))
-  normGrids<-gridExtra::grid.arrange(densPlot, qqPlot, ncol=2)
+  #normGrids<-gridExtra::grid.arrange(densPlot, qqPlot, ncol=2)
+  normGrids<-cowplot::plot_grid(densPlot, qqPlot)
 
   #Cooks plot
   cookPlot<-lindia::gg_cooksd(lm, threshold = "convention")+
@@ -284,8 +285,24 @@ ciPlots<-function(data, iter, alpha=0.05){
   names(df)[1]<-"Betas"
 
 
-  plot<-ggplot2::ggplot(df, aes(x=Betas, y=Estimate, color=TYPE ))+
-    ggplot2::geom_point()
+  plot<-ggplot2::ggplot(df, aes(x=as.factor(Betas), y=Estimate, color=TYPE ))+
+    ggplot2::geom_point( show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3))+
+    ggplot2::geom_errorbar(aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5))+
+    ggplot2::ylab("Estimates")+
+    ggplot2::xlab("Betas")+
+    ggplot2::labs(title="Comparison of Beta Estimates")+
+    ggplot2::theme_classic()+
+    scale_color_manual(values=c("red4","darkblue"), labels=c("Original", "Bootstrap"))+
+    ggplot2::theme(legend.position = "right",
+                   text=ggplot2::element_text(family = "Times"))+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45))+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(vjust=0.5))
+    #ggplot2::geom_point(data = within(df[df$Estimate <=4,], {subset = "Small"}), show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3)) +
+    #ggplot2::geom_point(data = within(df[df$Estimate >=4,], {subset = "Large"}), show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3)) +
+    #ggplot2::geom_errorbar(data = within(df[df$Estimate <=4,], {subset = "Small"}), aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5)) +
+    #ggplot2::geom_errorbar(data = within(df[df$Estimate >=4,], {subset = "Large"}), aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5)) +
+    #ggplot2::coord_flip() +
+    #ggplot2::facet_wrap(~ subset, scales = "free_x")
 
   print(plot)
 

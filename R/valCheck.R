@@ -31,7 +31,7 @@
 #' irislm<-lm(Sepal.Length~., data=iris)
 #' valCheck(irislm)
 #'
-#' irislm2<-lm(Sepal.Lenght~.^2, data=iris)
+#' irislm2<-lm(Sepal.Length~.^2, data=iris)
 #'
 valCheck<-function(lm, series=FALSE){
   #Autocorrelation (only works for series=TRUE and single order)
