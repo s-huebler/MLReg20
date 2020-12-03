@@ -11,7 +11,7 @@ If \code{series=TRUE} then the function will also print a statistic
 for independence. See vignette MLReg20_Explanation_And_Theory Section 1
 for explanation of interpretation of statistics and plots.}
 \usage{
-\code{valCheck(lm, series=FALSE)}
+valCheck(lm, series = FALSE)
 }
 \arguments{
 \item{lm}{A linear model object.}

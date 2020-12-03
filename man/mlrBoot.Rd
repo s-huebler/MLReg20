@@ -12,7 +12,7 @@ estimates are summarized. The mean is taken to be the bootstrapped estimate and 
 quantile of all the estimates is the upper bound and the alpha quantile of all of the estimates
 is the lower bound of a (1-alpha)\% confidence interval for the bootstrapped parameter estimates.}
 \usage{
-\code{mlrBoot(data, iter, alpha=0.05)}
+mlrBoot(data, iter, alpha = 0.05)
 }
 \arguments{
 \item{data}{A data frame with first column as the dependent variable and all other columns predictors.}

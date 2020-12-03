@@ -8,7 +8,6 @@
 #' quantile of all the estimates is the upper bound and the alpha quantile of all of the estimates
 #' is the lower bound of a (1-alpha)\% confidence interval for the bootstrapped parameter estimates.
 #'
-#' @usage \code{mlrBoot(data, iter, alpha=0.05)}
 #'
 #' @param data A data frame with first column as the dependent variable and all other columns predictors.
 #' @param iter Number of bootstrap iterations
@@ -155,7 +154,7 @@ mlrBoot<-function(data, iter, alpha=.05){
 
   #The list to be returned
   tmp<-list("Bootstrap Summary Statistics"=summ,
-            "Singular Matrices"=fails,
+            "Singular.Matrices"=fails,
             "Bootstrap Confidence Intervals"=cis,
             "Original MLR Confidence Intervals"=cio
   )

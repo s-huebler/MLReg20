@@ -7,7 +7,6 @@
 #' for independence. See vignette MLReg20_Explanation_And_Theory Section 1
 #' for explanation of interpretation of statistics and plots.
 #'
-#' @usage \code{valCheck(lm, series=FALSE)}
 #'
 #' @param lm A linear model object.
 #' @param series A boolean variable to indicate whether linear model has a time series component.

@@ -64,6 +64,6 @@ Here the data is the input rather than the linear model itself. For each data fr
 ```{r}
 x<-MLReg20::mlrBoot(iris, 100)
 ```
-Here we can see that of the 1000 bootstrap iterations, there are `r x$`Singular Matrices`$`` singular matricies. That means that the process created `r x$`Singular Matrices`$`` singular design matrices. The function also produced bootstrapped and original estimates and confidence intervals. The 2 different matrices can be compared. The estimates are very close, but the bootstrapping process gives a slightly larger confidence interval. The histograms show the distribution of the bootstrapped estimates. All of the distributions follow a normal type distribution, so the mean value is an acceptable estimate.
+Here we can see that of the 1000 bootstrap iterations, there are ` x$Singular.Matrices ` singular matricies. That means that the process created ` x$Singular.Matrices ` singular design matrices. The function also produced bootstrapped and original estimates and confidence intervals. The 2 different matrices can be compared. The estimates are very close, but the bootstrapping process gives a slightly larger confidence interval. The histograms show the distribution of the bootstrapped estimates. All of the distributions follow a normal type distribution, so the mean value is an acceptable estimate.
 
 The third function relies on the Bayesian paradigm over the classical paradigm. The classical paradigm 
