@@ -24,7 +24,9 @@
 #' samples. Therefore it is a useful diagnostic plot to indicate whether the
 #' regression model is good.
 #'
-
+#' @param formula A formula that can be used for a linear model.
+#' @param data A data frame with columns that match the names of the formula.
+#' @param alpha A confidence level.
 #'
 #' @return
 #' @export

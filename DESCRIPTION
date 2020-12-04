@@ -23,4 +23,5 @@ Imports:
   shiny,
   cowplot,
   MCMCpack,
-  coda
+  coda,
+  bayesplot

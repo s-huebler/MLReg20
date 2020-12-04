@@ -30,6 +30,13 @@ regression model is good.}
 \usage{
 bayesReg(formula, data, alpha = 0.05)
 }
+\arguments{
+\item{formula}{A formula that can be used for a linear model.}
+
+\item{data}{A data frame with columns that match the names of the formula.}
+
+\item{alpha}{A confidence level.}
+}
 \value{
 
 }
