@@ -21,4 +21,6 @@ Imports:
   lmtest,
   regclass,
   shiny,
-  cowplot
+  cowplot,
+  MCMCpack,
+  coda

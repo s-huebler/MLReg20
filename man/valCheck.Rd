@@ -43,6 +43,9 @@ rm(Species)
 irislm<-lm(Sepal.Length~., data=iris)
 valCheck(irislm)
 
-irislm2<-lm(Sepal.Length~.^2, data=iris)
+eu<-as.data.frame(datasets::EuStockMarkets)
+form.eu<-"DAX~SMI+CAC+FTSE"
+eulm<-lm(form.eu, data=eu)
+valCheck(eulm, series=TRUE)
 
 }

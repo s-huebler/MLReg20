@@ -36,6 +36,9 @@
 #'
 #' mlrBoot(iris, 1000)
 #'
+#' eu<-as.data.frame(datasets::EuStockMarkets)
+#' mlrBoot(eu, 100)
+#'
 mlrBoot<-function(data, iter, alpha=.05){
   #Defining the degrees of freedom and z stat to be used in conf. ints
   dfree=nrow(data)-ncol(data)

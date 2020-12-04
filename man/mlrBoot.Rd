@@ -54,4 +54,7 @@ rm(Species)
 
 mlrBoot(iris, 1000)
 
+eu<-as.data.frame(datasets::EuStockMarkets)
+mlrBoot(eu, 100)
+
 }

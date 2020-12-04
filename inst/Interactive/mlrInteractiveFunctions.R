@@ -264,7 +264,7 @@ oCI<-function(data, alpha=0.05){
   cio
 }
 
-ciPlots<-function(data, iter, alpha=0.05){
+ciPlots<-function(data, iter, formula,alpha=0.05){
   cib<-as.data.frame(t(ciComps(data, iter, alpha)))
   cib<-cbind(rownames(cib), cib)
   rownames(cib)<-NULL
@@ -285,25 +285,59 @@ ciPlots<-function(data, iter, alpha=0.05){
   names(df)[1]<-"Betas"
 
 
-  plot<-ggplot2::ggplot(df, aes(x=as.factor(Betas), y=Estimate, color=TYPE ))+
+  cibay<-as.data.frame(t(bayEst(data, formula, alpha)))
+  cibay<-cbind(rownames(cibay), cibay)
+  rownames(cibay)<-NULL
+  names(cibay)[1]<-"Betas"
+  cibay$TYPE<-rep(as.factor("bay"), nrow(cibay))
+  cibay[1,1]<-"Intercept"
+
+
+
+  df2<-dplyr::full_join(df, cibay)
+  df2<-as.data.frame(df2)
+
+
+  plot<-ggplot2::ggplot(df2, aes(x=as.factor(Betas), y=Estimate, color=TYPE ))+
     ggplot2::geom_point( show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3))+
     ggplot2::geom_errorbar(aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5))+
     ggplot2::ylab("Estimates")+
     ggplot2::xlab("Betas")+
     ggplot2::labs(title="Comparison of Beta Estimates")+
     ggplot2::theme_classic()+
-    scale_color_manual(values=c("red4","darkblue"), labels=c("Original", "Bootstrap"))+
+    scale_color_manual(values=c("red4","darkblue","black"), labels=c("Original", "Bootstrap", "Bayesian"))+
     ggplot2::theme(legend.position = "right",
                    text=ggplot2::element_text(family = "Times"))+
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45))+
     ggplot2::theme(axis.text.x = ggplot2::element_text(vjust=0.5))
-    #ggplot2::geom_point(data = within(df[df$Estimate <=4,], {subset = "Small"}), show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3)) +
-    #ggplot2::geom_point(data = within(df[df$Estimate >=4,], {subset = "Large"}), show.legend = FALSE, position=ggplot2::position_dodge2(w=0.3)) +
-    #ggplot2::geom_errorbar(data = within(df[df$Estimate <=4,], {subset = "Small"}), aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5)) +
-    #ggplot2::geom_errorbar(data = within(df[df$Estimate >=4,], {subset = "Large"}), aes(ymin=Lower, ymax=Upper, width=.3), position=ggplot2::position_dodge2(w=0.5)) +
-    #ggplot2::coord_flip() +
-    #ggplot2::facet_wrap(~ subset, scales = "free_x")
+
 
   print(plot)
 
+}
+
+bayEst<-function(data,formula,alpha=0.05){
+  bay<-MCMCpack::MCMCregress(formula, data)
+  sumBay<-summary(bay)
+  means<-as.data.frame(sumBay$statistics)
+  betas<-row.names(means)
+
+  means<-means$Mean
+  names(means)<-betas
+
+
+  quant<-as.data.frame(sumBay$quantiles)
+  names(quant)<-c("low", "quarter", "half", "threeQuarter", "high")
+
+
+   cibay<-data.frame(matrix(NA, ncol=length(betas), nrow=3))
+   names(cibay)<-betas
+   rownames(cibay)<-c("Estimate", "Lower", "Upper")
+
+   cibay[1,]<-unname(means)
+   cibay[2,]<-quant$low
+   cibay[3,]<-quant$high
+   cibay<-cibay[,-ncol(cibay)]
+   cibay<-as.data.frame(cibay)
+   cibay
 }

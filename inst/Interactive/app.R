@@ -20,6 +20,10 @@ irislm<-lm(Sepal.Length~., data=iris)
 quasar<-readxl::read_excel("QUASAR.XLS")
 quasar<-quasar[,c(7,2:6)]
 
+#Europena stock market
+eu<-as.data.frame(datasets::EuStockMarkets)
+eulm<-lm(DAX~SMI+CAC+FTSE, data=eu)
+
 #All Q linear model
 qlm1<-lm(RFEWIDTH~., data=quasar)
 #Best model
@@ -43,7 +47,7 @@ ui<- fluidPage(
       #Pick data
       selectInput("data",
                   "Select which dataset to use",
-                  choices=c("Iris", "Quasar")),
+                  choices=c("Iris", "Quasar", "EU.Stocks")),
 
 
       #Assumptions to check
@@ -84,6 +88,7 @@ ui<- fluidPage(
     tabPanel("Comparison of Confidence Intervals",
                 tableOutput("oCI"),
                 tableOutput("bootCI"),
+                tableOutput("bayCI"),
                 plotOutput("comparison"))
 
 
@@ -100,7 +105,11 @@ server<- function(input, output, session){
   if(input$data=="Iris"){
     iris
   }else if(input$data=="Quasar"){
-      quasar2} })
+      quasar2
+  }else if(input$data=="EU.Stocks") {
+      eu
+    }
+    })
 
 
   lm<-reactive({
@@ -109,7 +118,20 @@ server<- function(input, output, session){
     irislm
   }else if(input$data=="Quasar"){
     qlmBest
+  }else if(input$data=="EU.Stocks"){
+    eulm
   }
+  })
+
+  formula<-reactive({
+
+    if(input$data=="Iris"){
+      as.formula("Sepal.Length~.")
+    }else if(input$data=="Quasar"){
+      as.formula("logRFEWIDTH~REDSHIFT + LINEFLUX + ABSMAG")
+    }else if(input$data=="EU.Stocks"){
+      as.formula("DAX~SMI+CAC+FTSE")
+    }
   })
 
   output$data<-renderDataTable({
@@ -140,15 +162,23 @@ server<- function(input, output, session){
 
    output$bootCI <- renderTable({
      #tab<-c("a"=1, "b"=2)
-     ret<-ciComps(data(), iter=as.numeric(input$bootIter), alpha=as.numeric(input$alpha))
+     ret<-ciComps(data(), iter=as.numeric(input$bootIter),alpha=as.numeric(input$alpha))
      df1<-as.data.frame((ret))
      df1
    }, rownames = TRUE,
    caption="Bootstrapped CI",
    caption.placement = getOption("xtable.caption.placement", "top"))
 
+   output$bayCI <- renderTable({
+     ret<-bayEst(data(), formula(), alpha=as.numeric(input$alpha))
+     df1<-as.data.frame((ret))
+     df1
+   }, rownames = TRUE,
+   caption="Bayesian CI",
+   caption.placement = getOption("xtable.caption.placement", "top"))
+
    output$comparison <- renderPlot({
-     ciPlots(data(), as.numeric(input$bootIter), as.numeric(input$alpha))
+     ciPlots(data(), as.numeric(input$bootIter), formula(),as.numeric(input$alpha))
    })
 
 }
